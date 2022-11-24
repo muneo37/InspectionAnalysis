@@ -1,17 +1,42 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
-    <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+<ErrorBoundary @ref="_errorBoundary">
+    <ChildContent>
+        <div class="page">
+            <main>
+                <article class="content px-4">
+                    @Body
+                </article>
+            </main>
         </div>
+    </ChildContent>
+    <ErrorContent>
+        <div class="container-fluid">
+            <div class="row">
+                <p>例外が発生しています [@context.GetType().ToString()]</p>
+                <p>@context.Message</p>
+                @if (context.StackTrace is not null)
+                {
+                    <p>
+                        @foreach (var line in context.StackTrace.Split("at ", StringSplitOptions.RemoveEmptyEntries).ToList())
+                        {
+                            @line
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+                            <br />
+                        }
+                    </p>
+                }
+            </div>
+            <div class="row col-2 ms-4">
+                <button class="btn btn-secondary" @onclick="() => OnResetButtonClick()">Reset</button>
+            </div>
+        </div>
+    </ErrorContent>
+</ErrorBoundary>
+@code {
+    private ErrorBoundary? _errorBoundary;
+    private void OnResetButtonClick()
+    {
+        this._errorBoundary?.Recover();
+    }
+}
