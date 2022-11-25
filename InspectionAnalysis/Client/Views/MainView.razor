@@ -1,10 +1,11 @@
-﻿@inherits LayoutComponentBase
+﻿@inherits ViewLayoutComponentBase<MainViewModel>
 
 <ErrorBoundary @ref="_errorBoundary">
     <ChildContent>
         <div class="page">
             <main>
                 <article class="content px-4">
+                    <h1>@DataContext.ProductName</h1>
                     @Body
                 </article>
             </main>
