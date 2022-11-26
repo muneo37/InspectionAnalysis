@@ -20,6 +20,22 @@
         <a class="dismiss">🗙</a>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
+    <script src="lib/Chart.js/chart.js"></script>
+    <script>
+        function renderChart(id, chartJson) {
+            if (window.chartArray == null) {
+                window.chartArray = new Object();
+            }
+            if (window.chartArray[id]) {
+                console.log('destroy chartObj');
+                window.chartArray[id].destroy();
+            }
+            console.log("id=" + id);
+            console.log("json=" + chartJson);
+            var ctx = document.getElementById(id);
+            window.chartArray[id] = new Chart(ctx, JSON.parse(chartJson));
+        };
+    </script>
 </body>
 
 </html>

@@ -7,3 +7,15 @@
 <h1>Hello, world!</h1>
 
 <h1>@DataContext.DisplayString</h1>
+
+<div class="container" style="padding:10px">
+    <div class="row">
+        <InputButton Class="btn btn-primary" Command="@DataContext.CreateChartCommand">Refresh</InputButton>
+    </div>
+
+    <div class="row">
+        <div class="col">
+                <Chart id="barchart" Contents="@DataContext.JudgeBarChartContents"/>
+        </div>
+    </div>
+</div>

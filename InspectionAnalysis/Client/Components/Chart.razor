@@ -1,0 +1,56 @@
+﻿@inject IJSRuntime JS;
+@using System.Text;
+
+<canvas id="@Id"></canvas>
+
+
+@code {
+    [Parameter]
+    public string Id { get; set; } = "myChart";
+
+    [Parameter]
+    public ChartContents? Contents{ get; set; }
+
+    private ChartContents? _contentsCore;
+    private ChartContents? ContentsCore
+    {
+        get => this._contentsCore;
+        set
+        {
+            if(this._contentsCore != value)
+            {
+                this._contentsCore = value;
+                UpdateChart();
+            }
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        this.ContentsCore= this.Contents;
+    }
+
+    private void UpdateChart()
+    {
+        if(this.Contents == null || this.Contents.Items == null)
+        {
+            return;
+        }
+
+        var jsonBuilder = new StringBuilder();
+        jsonBuilder.AppendLine("{");
+        jsonBuilder.AppendLine($"\"type\": \"{this.Contents.Type}\",");
+        jsonBuilder.AppendLine("\"data\": {");
+        jsonBuilder.AppendLine($"\"labels\": [{string.Join(", ", this.Contents.Labels)}],");
+        jsonBuilder.AppendLine("\"datasets\":[");
+        jsonBuilder.AppendLine("       " + string.Join(", \r\n       ", this.Contents.Items.Select(x => x.ToString())));
+        jsonBuilder.AppendLine("]");
+        jsonBuilder.AppendLine("},");
+        jsonBuilder.AppendLine(this.Contents.Options);
+        jsonBuilder.AppendLine("}");
+
+        var json = jsonBuilder.ToString();
+
+        JS.InvokeVoidAsync("renderChart", this.Id, json);
+    }
+}

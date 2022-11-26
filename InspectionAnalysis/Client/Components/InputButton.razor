@@ -1,0 +1,52 @@
+﻿@using System.Windows.Input
+
+<button class="@Class" @onclick="() => Command?.Execute(CommandParameter)" disabled="@Disabled">@ChildContent</button>
+
+@code {
+    [Parameter]
+    public string? Class { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private ICommand? _command;
+    [Parameter]
+    public ICommand? Command
+    {
+        get { return this._command; }
+        set
+        {
+            if (this._command != null)
+            {
+                this._command.CanExecuteChanged -= OnCanExecuteChanged;
+            }
+            this._command = value;
+            if (this._command != null)
+            {
+                this._command.CanExecuteChanged += OnCanExecuteChanged;
+            }
+        }
+    }
+
+    [Parameter]
+    public object? CommandParameter { get; set; }
+
+    private bool Disabled { get; set; }
+
+    protected override Task OnParametersSetAsync()
+    {
+        UpdateCanExecute();
+
+        return base.OnParametersSetAsync();
+    }
+
+    private void OnCanExecuteChanged(object? sender, EventArgs e)
+    {
+        UpdateCanExecute();
+    }
+
+    private void UpdateCanExecute()
+    {
+        Disabled = !Command?.CanExecute(CommandParameter) ?? false;
+    }
+}
