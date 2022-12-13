@@ -33,10 +33,9 @@
     protected override async Task OnInitializedAsync()
     {
         this._hubConnection = new HubConnectionBuilder().WithUrl(Navigation.ToAbsoluteUri("/inspectresulthub")).Build();
-        this._hubConnection.On<string, string>("ReceiveData", (user, message) =>
+        this._hubConnection.On<IEnumerable<InspectResult>>("ReceiveData", results =>
         {
-            var test = user;
-            var test1 = message;
+            var test = results;
         });
 
         await this._hubConnection.StartAsync();
@@ -46,7 +45,7 @@
     {
         if(this._hubConnection is not null)
         {
-            await this._hubConnection.SendAsync("SendData", "testuser", "testmessage");
+            await this._hubConnection.SendAsync("SendData", DateTime.Parse("2022/11/08"), DateTime.Parse("2022/11/14"));
         }
     }
 }

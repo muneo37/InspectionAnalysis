@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using InspectionAnalysis.Operator;
+using Microsoft.AspNetCore.SignalR;
 
 namespace InspectionAnalysis.Server.Hubs
 {
     public class InspectResultHub : Hub
     {
-        public async Task SendData(string user, string message)
+        public async Task SendData(DateTime startTime, DateTime endTime)
         {
-            await Clients.All.SendAsync("ReceiveData", user, message);
+            var results = Select.InspectResultWhereTime(startTime, endTime).ToList();
+
+            await Clients.All.SendAsync("ReceiveData", results);
         }
     }
 }
