@@ -1,4 +1,7 @@
-﻿@inherits ViewLayoutComponentBase<TopViewModel>
+﻿@using InspectionAnalysis.Shared
+@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager Navigation
+@inherits ViewLayoutComponentBase<TopViewModel>
 
 @page "/"
 
@@ -19,3 +22,31 @@
         </div>
     </div>
 </div>
+<button @onclick="Send" disabled="@(!IsConnected)">Send</button>
+
+@code{
+    public bool IsConnected { get => this._hubConnection?.State == HubConnectionState.Connected; }
+
+    private HubConnection? _hubConnection;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        this._hubConnection = new HubConnectionBuilder().WithUrl(Navigation.ToAbsoluteUri("/inspectresulthub")).Build();
+        this._hubConnection.On<string, string>("ReceiveData", (user, message) =>
+        {
+            var test = user;
+            var test1 = message;
+        });
+
+        await this._hubConnection.StartAsync();
+    }
+
+    private async Task Send()
+    {
+        if(this._hubConnection is not null)
+        {
+            await this._hubConnection.SendAsync("SendData", "testuser", "testmessage");
+        }
+    }
+}

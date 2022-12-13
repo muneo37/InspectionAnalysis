@@ -1,0 +1,65 @@
+﻿@model IEnumerable<InspectionAnalysis.InspectResult>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.WorkData)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CameraNo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PCNo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Count)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsOK)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.InspTime)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.WorkData.WorkDataName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CameraNo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PCNo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Count)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsOK)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.InspTime)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.InspectResultId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.InspectResultId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.InspectResultId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
