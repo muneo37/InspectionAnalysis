@@ -22,30 +22,30 @@
         </div>
     </div>
 </div>
-<button @onclick="Send" disabled="@(!IsConnected)">Send</button>
+@*<button @onclick="Send" disabled="@(!IsConnected)">Send</button>*@
 
 @code{
-    public bool IsConnected { get => this._hubConnection?.State == HubConnectionState.Connected; }
+    //public bool IsConnected { get => this._hubConnection?.State == HubConnectionState.Connected; }
 
-    private HubConnection? _hubConnection;
+    //private HubConnection? _hubConnection;
 
 
-    protected override async Task OnInitializedAsync()
-    {
-        this._hubConnection = new HubConnectionBuilder().WithUrl(Navigation.ToAbsoluteUri("/inspectresulthub")).Build();
-        this._hubConnection.On<IEnumerable<InspectResult>>("ReceiveData", results =>
-        {
-            var test = results;
-        });
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    this._hubConnection = new HubConnectionBuilder().WithUrl(Navigation.ToAbsoluteUri("/inspectresulthub")).Build();
+    //    this._hubConnection.On<IEnumerable<InspectResult>>("ReceiveData", results =>
+    //    {
+    //        var test = results;
+    //    });
 
-        await this._hubConnection.StartAsync();
-    }
+    //    await this._hubConnection.StartAsync();
+    //}
 
-    private async Task Send()
-    {
-        if(this._hubConnection is not null)
-        {
-            await this._hubConnection.SendAsync("SendData", DateTime.Parse("2022/11/08"), DateTime.Parse("2022/11/14"));
-        }
-    }
+    //private async Task Send()
+    //{
+    //    if(this._hubConnection is not null)
+    //    {
+    //        await this._hubConnection.SendAsync("SendData", DateTime.Parse("2022/11/08"), DateTime.Parse("2022/11/14"));
+    //    }
+    //}
 }

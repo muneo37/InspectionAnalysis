@@ -1,6 +1,10 @@
 ﻿using System.Drawing;
 using XACs.NET;
 
+using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.AspNetCore.Components;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+
 namespace InspectionAnalysis.Client.ViewModels
 {
     public class TopViewModel : NotificationObject
@@ -20,6 +24,10 @@ namespace InspectionAnalysis.Client.ViewModels
         /// チャート
         /// </summary>
         private ChartContents? _judgeBarChartContents;
+
+        private NavigationManager _navigation;
+
+        private HubConnection? _hubConnection;
 
         #endregion
 
@@ -52,6 +60,22 @@ namespace InspectionAnalysis.Client.ViewModels
         public TopViewModel()
         {
             this.CreateChartCommand = new DelegateCommand(_ => CreateChart());
+
+            var task = InitializedAsync();
+            //task.Wait();
+
+            int test = 10;
+        }
+
+        protected async Task InitializedAsync()
+        {
+            this._hubConnection = new HubConnectionBuilder().WithUrl("https://localhost:7093/inspectresulthub").Build();
+            this._hubConnection.On<IEnumerable<InspectResult>>("ReceiveData", results =>
+            {
+                var test = results;
+            });
+
+            await this._hubConnection.StartAsync();
         }
 
         /// <summary>
@@ -59,24 +83,36 @@ namespace InspectionAnalysis.Client.ViewModels
         /// </summary>
         private void CreateChart()
         {
-            int[] ok = {4,5,6,7};
+            var task = Send();
 
-            var item = new ChartItem(ok) { BackgroundColor = Color.FromArgb(255, 114, 125, 242) };
+            task.Wait();
+            //int[] ok = {4,5,6,7};
 
-            List<ChartItem> items = new List<ChartItem>();
+            //var item = new ChartItem(ok) { BackgroundColor = Color.FromArgb(255, 114, 125, 242) };
 
-            items.Add(item);
+            //List<ChartItem> items = new List<ChartItem>();
 
-            string[] labels = { "\"8/10\"", "\"8/11\"", "\"8/12\"", "\"8/13\"" };
+            //items.Add(item);
 
-            this.JudgeBarChartContents = new ChartContents()
-            {
-                Type = "bar",
-                Labels = labels,
-                Items = items,
-                Options = "\"options\": {\"responsive\": true, \"maintainAspectRatio\": false}"
-            };
+            //string[] labels = { "\"8/10\"", "\"8/11\"", "\"8/12\"", "\"8/13\"" };
+
+            //this.JudgeBarChartContents = new ChartContents()
+            //{
+            //    Type = "bar",
+            //    Labels = labels,
+            //    Items = items,
+            //    Options = "\"options\": {\"responsive\": true, \"maintainAspectRatio\": false}"
+            //};
         }
+
+        private async Task Send()
+        {
+            if (this._hubConnection is not null)
+            {
+                await this._hubConnection.SendAsync("SendData", DateTime.Parse("2022/11/08"), DateTime.Parse("2022/11/14"));
+            }
+        }
+
         #endregion
 
     }
